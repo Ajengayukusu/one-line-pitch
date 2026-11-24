@@ -17,6 +17,14 @@ function entryLine(): string {
   if (/\r|\n/.test(line)) {
     throw new Error("entry must be a single line");
   }
+  // No control characters and no accidental double spaces: either would
+  // break the one-line rendering the judge sees.
+  if (/[\u0000-\u001F\u007F]/.test(line)) {
+    throw new Error("entry must not contain control characters");
+  }
+  if (/  /.test(line)) {
+    throw new Error("entry must not contain double spaces");
+  }
   // "make.fun" carries a period of its own; ignore it when counting sentences.
   const endings = line.replace(/make\.fun/g, "makefun").match(/[.!?]/g) ?? [];
   if (endings.length !== 1 || !line.endsWith(".")) {
